@@ -30,7 +30,6 @@ class CameraThread(QThread):
 
             # Check for face detection
             self.face_detected = self.face_detector.is_face_detected(frame)
-            print(self.face_detected)
             # Emit the frame regardless of face detection
             self.frameCaptured.emit(frame)
 

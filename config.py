@@ -50,4 +50,8 @@ class ScreenTimeManager:
     def get_current_time(self):
         """Get current time for display purposes"""
         return self.get_current_screen_time()
+    
+    def get_treshold_timer(self):
+        # 20 minutes
+        return 20*60
 

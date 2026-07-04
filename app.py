@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
     QVBoxLayout,
+    QMessageBox
 )
 
 from camera.thread import CameraThread
@@ -20,6 +21,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.long_screen_popup_shown = False
         self.setWindowTitle("Eye Break Reminder")
         self.resize(900, 700)
 
@@ -95,6 +97,8 @@ class MainWindow(QMainWindow):
         if not face_detected:
             # Reset timer when face is not detected
             self.screen_time_manager.reset_session()
+            self.long_screen_popup_shown = False
+            self.warningLabel.hide()
             print("Face not detected. Timer reset.")
         else:
             # Continue tracking time normally
@@ -105,7 +109,16 @@ class MainWindow(QMainWindow):
         minutes = int(current_time // 60)
         seconds = int(current_time % 60)
         self.timeLabel.setText(f"Screen Time: {minutes}m {seconds}s")
+        if current_time >= self.screen_time_manager.get_treshold_timer() and not self.long_screen_popup_shown:
+            self.long_screen_popup_shown = True
 
+            QMessageBox.warning(
+                self,
+                "Screen Time Warning",
+                "You looking at screen too long!"
+            )
+            self.screen_time_manager.reset_session()
+            self.long_screen_popup_shown = False
         # Check warning system
         if self.screen_time_manager.check_warning():
             self.warningLabel.setText("Warning: Extended screen time detected!")
